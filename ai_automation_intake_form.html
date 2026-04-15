@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free AI Automation Audit — Apply Now</title>
+<meta name="description" content="A structured 3-minute audit that maps your biggest operational bottlenecks and shows you where AI automation can save hours every week.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:             #06050f;
+  --card:           rgba(14, 11, 30, 0.88);
+  --border:         rgba(139, 92, 246, 0.14);
+  --border-hover:   rgba(139, 92, 246, 0.42);
+  --border-active:  rgba(139, 92, 246, 0.7);
+  --accent:         #8b5cf6;
+  --accent-bright:  #a78bfa;
+  --accent-glow:    rgba(139, 92, 246, 0.35);
+  --accent-dim:     rgba(139, 92, 246, 0.1);
+  --text-1:         #f0eeff;
+  --text-2:         #9b98be;
+  --text-3:         #55516e;
+  --danger:         #f87171;
+  --success:        #34d399;
+  --r:              10px;
+  --r-lg:           18px;
+  --ease:           cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATED BACKGROUND
+═══════════════════════════════════════════════════════ */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 15% 5%,  rgba(109, 40, 217, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 85% 85%, rgba(59, 130, 246, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 50% 45%, rgba(139, 92, 246, 0.06) 0%, transparent 65%);
+  animation: bgPulse 14s ease-in-out infinite alternate;
+}
+
+.bg-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(139,92,246,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,92,246,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+@keyframes bgPulse {
+  0%   { transform: scale(1);    opacity: 1; }
+  100% { transform: scale(1.06); opacity: 0.75; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════ */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem 3rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 2.75rem 2.75rem 2.5rem;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow:
+    0 0 0 1px rgba(139,92,246,0.04),
+    0 24px 80px rgba(0,0,0,0.6),
+    0 0 120px rgba(139,92,246,0.07) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top shimmer line */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.55) 40%, rgba(167,139,250,0.7) 55%, rgba(139,92,246,0.55) 70%, transparent 100%);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN TRANSITIONS
+═══════════════════════════════════════════════════════ */
+.screen { display: none; }
+.screen.active {
+  display: block;
+  animation: slideIn 0.4s var(--ease) both;
+}
+.screen.back {
+  animation: slideInBack 0.4s var(--ease) both;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInBack {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BADGE
+═══════════════════════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.28);
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 1.375rem;
+}
+
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 10px var(--accent);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════════════════════════ */
+.headline {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.2rem, 3.5vw, 1.65rem);
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.875rem;
+}
+
+.sub {
+  font-size: 14.5px;
+  color: var(--text-2);
+  line-height: 1.78;
+  margin-bottom: 1.5rem;
+}
+
+.q-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 0.35rem;
+  line-height: 1.45;
+}
+
+.q-hint {
+  font-size: 12.5px;
+  color: var(--text-3);
+  line-height: 1.6;
+  margin-bottom: 0.875rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════════════════ */
+.progress-wrap {
+  margin-bottom: 1.875rem;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.progress-dot {
+  height: 3px;
+  flex: 1;
+  border-radius: 3px;
+  background: rgba(139,92,246,0.1);
+  transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+
+.progress-dot.filled {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(139,92,246,0.55);
+}
+
+.step-label {
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.03em;
+}
+
+.step-label em {
+  color: var(--accent-bright);
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════
+   VALUE PILLS
+═══════════════════════════════════════════════════════ */
+.value-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 1.75rem;
+}
+
+.pill {
+  font-size: 12px;
+  padding: 5px 13px;
+  border-radius: 100px;
+  border: 1px solid rgba(139,92,246,0.2);
+  color: var(--text-2);
+  background: rgba(139,92,246,0.06);
+  letter-spacing: 0.01em;
+  transition: border-color 0.25s;
+}
+.pill:hover { border-color: rgba(139,92,246,0.45); }
+
+/* ═══════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════ */
+.cta-btn {
+  display: block;
+  width: 100%;
+  padding: 15px 28px;
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #a78bfa 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 4px 28px rgba(139,92,246,0.4), 0 0 0 1px rgba(167,139,250,0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  transition: opacity 0.3s;
+}
+
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(139,92,246,0.55), 0 0 0 1px rgba(167,139,250,0.2) inset;
+}
+.cta-btn:active { transform: translateY(0); }
+
+.nav-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.back-btn {
+  padding: 12px 18px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text-2);
+}
+
+.next-btn {
+  flex: 1;
+  padding: 13px 22px;
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 4px 20px rgba(139,92,246,0.35);
+}
+
+.next-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(139,92,246,0.5);
+}
+.next-btn:active { transform: translateY(0); }
+
+.next-btn:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FORM FIELDS
+═══════════════════════════════════════════════════════ */
+.field-wrap { margin-bottom: 1.5rem; }
+
+input[type=text],
+input[type=email],
+textarea,
+select {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 12px 15px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: rgba(139,92,246,0.04);
+  color: var(--text-1);
+  outline: none;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type=text]:focus,
+input[type=email]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+  background: rgba(139,92,246,0.08);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.18), 0 0 24px rgba(139,92,246,0.1);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-3);
+  font-size: 13.5px;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+select option {
+  background: #0f0d1f;
+  color: var(--text-1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RADIO & CHECKBOX
+═══════════════════════════════════════════════════════ */
+.radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.radio-item,
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: border-color 0.22s var(--ease), background 0.22s var(--ease), box-shadow 0.22s var(--ease);
+  user-select: none;
+}
+
+.radio-item:hover,
+.check-item:hover {
+  border-color: rgba(139,92,246,0.38);
+  background: rgba(139,92,246,0.05);
+}
+
+.radio-item.selected,
+.check-item.selected {
+  border-color: var(--accent);
+  background: rgba(139,92,246,0.1);
+  box-shadow: 0 0 0 1px rgba(139,92,246,0.18) inset, 0 2px 12px rgba(139,92,246,0.12);
+}
+
+.radio-item span,
+.check-item span {
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.45;
+  transition: color 0.2s;
+}
+
+.radio-item.selected span,
+.check-item.selected span { color: var(--text-1); }
+
+/* Custom radio/checkbox */
+input[type=radio],
+input[type=checkbox] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid rgba(139,92,246,0.28);
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.22s var(--ease);
+  position: relative;
+  background: transparent;
+}
+
+input[type=checkbox] { border-radius: 5px; }
+
+input[type=radio]:checked,
+input[type=checkbox]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(139,92,246,0.55);
+}
+
+input[type=radio]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+input[type=checkbox]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -58%) rotate(45deg);
+  width: 4px; height: 7px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ERROR
+═══════════════════════════════════════════════════════ */
+.error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 7px;
+  display: none;
+  align-items: center;
+  gap: 5px;
+}
+
+.error.visible {
+  display: flex;
+  animation: errIn 0.22s ease both;
+}
+
+@keyframes errIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   DIVIDER
+═══════════════════════════════════════════════════════ */
+.divider {
+  border: none;
+  border-top: 1px solid rgba(139,92,246,0.1);
+  margin: 1.375rem 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUALIFIED SCREEN
+═══════════════════════════════════════════════════════ */
+.approved-header {
+  text-align: center;
+  padding: 0.5rem 0 1.5rem;
+}
+
+.checkmark-ring {
+  width: 58px; height: 58px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: rgba(52,211,153,0.1);
+  border: 1px solid rgba(52,211,153,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  animation: popIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.cal-block {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.75rem 1.5rem;
+  background: rgba(139,92,246,0.04);
+  text-align: center;
+}
+
+.cal-block .cal-icon { font-size: 1.875rem; margin-bottom: 0.875rem; }
+.cal-block .cal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text-1);
+}
+.cal-block .cal-sub {
+  font-size: 12.5px;
+  color: var(--text-3);
+  margin-bottom: 1.25rem;
+}
+
+.cal-cta {
+  display: inline-block;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+}
+.cal-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(139,92,246,0.55);
+}
+
+.cal-hint { font-size: 10.5px; color: var(--text-3); margin-top: 0.875rem; }
+
+.next-steps {
+  margin-top: 1.25rem;
+  padding: 1.125rem 1.375rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: rgba(139,92,246,0.03);
+}
+
+.next-steps-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 0.625rem;
+}
+
+.next-steps ol {
+  list-style: none;
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.next-steps li {
+  counter-increment: step;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.next-steps li::before {
+  content: counter(step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid var(--border);
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-bright);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   UNQUALIFIED SCREEN
+═══════════════════════════════════════════════════════ */
+.resource-card {
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  transition: border-color 0.22s var(--ease), background 0.22s var(--ease);
+  text-align: left;
+  cursor: pointer;
+}
+.resource-card:hover {
+  border-color: var(--border-hover);
+  background: rgba(139,92,246,0.04);
+}
+.resource-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+.resource-card-sub { font-size: 12px; color: var(--text-3); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+.form-footer {
+  margin-top: 1.75rem;
+  font-size: 11.5px;
+  color: var(--text-3);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.form-footer a {
+  color: var(--accent-bright);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.form-footer a:hover { opacity: 0.75; }
+
+/* ═══════════════════════════════════════════════════════
+   WORD COUNT (textarea)
+═══════════════════════════════════════════════════════ */
+.char-count {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: right;
+  margin-top: 5px;
+  transition: color 0.2s;
+}
+.char-count.ok { color: var(--success); }
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 540px) {
+  .card { padding: 1.75rem 1.25rem 1.5rem; border-radius: 14px; }
+  .check-grid { grid-template-columns: 1fr; }
+  .headline { font-size: 1.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+</style>
+</head>
+
+<body>
+<div class="bg-layer"></div>
+
+<div class="page">
+<div class="card">
+
+  <!-- ══════════════════════════════════════
+       WELCOME
+  ══════════════════════════════════════ -->
+  <div class="screen active" id="s-welcome">
+    <div class="badge"><span class="badge-dot"></span>Free AI Automation Audit — Limited Spots</div>
+    <h1 class="headline">Find out exactly where your business is leaking time — and how to get it back.</h1>
+    <p class="sub">This isn't a contact form. It's a structured 3-minute audit that maps your biggest operational bottlenecks and shows you where intelligent automation can eliminate hours of manual work every week.</p>
+    <div class="value-pills">
+      <span class="pill">✦ Workflow analysis included</span>
+      <span class="pill">✦ No obligation</span>
+      <span class="pill">✦ Results-focused conversation</span>
+      <span class="pill">✦ Senior strategist only</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--text-3);margin-bottom:1.5rem;line-height:1.65">Accepted applicants receive a 30-minute private strategy session — not a sales pitch.</p>
+    <button class="cta-btn" onclick="nav('s-q1')">Begin My Free Automation Audit →</button>
+    <p style="font-size:11.5px;color:var(--text-3);text-align:center;margin-top:0.875rem">Takes about 3 minutes · Spots are limited each month</p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 1
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q1">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-1"></div>
+      <p class="step-label"><em>Step 1 of 9</em> — Let's start with the basics</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">What's your full name?</p>
+      <input type="text" id="q1-name" placeholder="e.g. Sarah Mitchell" autocomplete="name">
+      <div class="error" id="e1">⚠ Please enter your name.</div>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">And your business email?</p>
+      <p class="q-hint">We'll use this to send your audit summary — no newsletters, ever.</p>
+      <input type="email" id="q1-email" placeholder="you@company.com" autocomplete="email">
+      <div class="error" id="e2">⚠ Please enter a valid email address.</div>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">What is your company or brand name?</p>
+      <input type="text" id="q1-company" placeholder="e.g. Apex Real Estate Group" autocomplete="organization">
+      <div class="error" id="e3">⚠ Please enter your company name.</div>
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" onclick="validateQ1()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 2
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q2">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-2"></div>
+      <p class="step-label"><em>Step 2 of 9</em> — Your business context</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">What industry or niche does your business operate in?</p>
+      <p class="q-hint">Be specific — this helps us tailor your audit recommendations precisely.</p>
+      <select id="q2-industry">
+        <option value="">Select your industry</option>
+        <option>Real estate agency</option>
+        <option>E-commerce / DTC brand</option>
+        <option>B2B SaaS</option>
+        <option>Marketing or creative agency</option>
+        <option>Financial services / insurance</option>
+        <option>Healthcare or wellness</option>
+        <option>Coaching or consulting</option>
+        <option>Logistics or operations</option>
+        <option>Legal or professional services</option>
+        <option>Other</option>
+      </select>
+      <div class="error" id="e4">⚠ Please select your industry.</div>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">How large is your team?</p>
+      <div class="radio-list" id="rg-size">
+        <label class="radio-item"><input type="radio" name="size" value="Solo"> <span>Solo operator — just me</span></label>
+        <label class="radio-item"><input type="radio" name="size" value="2-5"> <span>2–5 people (small, tight-knit team)</span></label>
+        <label class="radio-item"><input type="radio" name="size" value="6-20"> <span>6–20 people (growing team)</span></label>
+        <label class="radio-item"><input type="radio" name="size" value="21-100"> <span>21–100 people (established business)</span></label>
+        <label class="radio-item"><input type="radio" name="size" value="100+"> <span>100+ people (enterprise)</span></label>
+      </div>
+      <div class="error" id="e5">⚠ Please select your team size.</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q1', true)">← Back</button>
+      <button class="next-btn" onclick="validateQ2()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 3
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q3">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-3"></div>
+      <p class="step-label"><em>Step 3 of 9</em> — Identifying your bottlenecks</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">Which manual processes are currently draining your team's time the most?</p>
+      <p class="q-hint">Select all that apply — there are no wrong answers here.</p>
+      <div class="check-grid" id="cg-pain">
+        <label class="check-item"><input type="checkbox" value="Lead follow-up & CRM updates"> <span>Lead follow-up & CRM updates</span></label>
+        <label class="check-item"><input type="checkbox" value="Scheduling & appointment booking"> <span>Scheduling & appointment booking</span></label>
+        <label class="check-item"><input type="checkbox" value="Proposal / document generation"> <span>Proposal / document generation</span></label>
+        <label class="check-item"><input type="checkbox" value="Reporting & data entry"> <span>Reporting & data entry</span></label>
+        <label class="check-item"><input type="checkbox" value="Client onboarding workflows"> <span>Client onboarding workflows</span></label>
+        <label class="check-item"><input type="checkbox" value="Invoice & payment processing"> <span>Invoice & payment processing</span></label>
+        <label class="check-item"><input type="checkbox" value="Internal comms & approvals"> <span>Internal comms & approvals</span></label>
+        <label class="check-item"><input type="checkbox" value="Social media & content scheduling"> <span>Social media & content scheduling</span></label>
+      </div>
+      <div class="error" id="e6">⚠ Please select at least one area.</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q2', true)">← Back</button>
+      <button class="next-btn" onclick="validateQ3()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 4
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q4">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-4"></div>
+      <p class="step-label"><em>Step 4 of 9</em> — The cost of inaction</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">Roughly how many hours per week does your team spend on repetitive, manual tasks?</p>
+      <p class="q-hint">Think: copy-paste work, chasing responses, formatting spreadsheets, manual updates.</p>
+      <div class="radio-list" id="rg-hours">
+        <label class="radio-item"><input type="radio" name="hours" value="1-5"> <span>1–5 hours/week — minor inconvenience</span></label>
+        <label class="radio-item"><input type="radio" name="hours" value="5-15"> <span>5–15 hours/week — noticeable drag on output</span></label>
+        <label class="radio-item"><input type="radio" name="hours" value="15-30"> <span>15–30 hours/week — significant bottleneck</span></label>
+        <label class="radio-item"><input type="radio" name="hours" value="30+"> <span>30+ hours/week — critical, actively affecting growth</span></label>
+      </div>
+      <div class="error" id="e7">⚠ Please select an option.</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q3', true)">← Back</button>
+      <button class="next-btn" onclick="validateQ4()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 5
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q5">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-5"></div>
+      <p class="step-label"><em>Step 5 of 9</em> — Your situation in your own words</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">Describe the single biggest operational headache in your business right now.</p>
+      <p class="q-hint">Don't filter yourself — the more specific, the more targeted your audit session will be.</p>
+      <textarea id="q5-pain" placeholder="e.g. 'Our sales team manually copies lead data from emails into our CRM every morning. It takes 2 hours and data is always inconsistent. We've lost deals because of slow follow-up...'" oninput="updateCharCount()"></textarea>
+      <div class="char-count" id="cc">0 / 20 characters minimum</div>
+      <div class="error" id="e8">⚠ Please describe your main challenge (at least 20 characters).</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q4', true)">← Back</button>
+      <button class="next-btn" onclick="validateQ5()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 6
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q6">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-6"></div>
+      <p class="step-label"><em>Step 6 of 9</em> — Tools & current setup</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">Which tools and platforms does your business currently use?</p>
+      <p class="q-hint">Select all that apply — this tells us what we're working with.</p>
+      <div class="check-grid" id="cg-tools">
+        <label class="check-item"><input type="checkbox" value="HubSpot"> <span>HubSpot</span></label>
+        <label class="check-item"><input type="checkbox" value="Salesforce"> <span>Salesforce</span></label>
+        <label class="check-item"><input type="checkbox" value="GoHighLevel"> <span>GoHighLevel</span></label>
+        <label class="check-item"><input type="checkbox" value="Zapier / Make"> <span>Zapier / Make</span></label>
+        <label class="check-item"><input type="checkbox" value="Airtable / Notion"> <span>Airtable / Notion</span></label>
+        <label class="check-item"><input type="checkbox" value="Slack / Teams"> <span>Slack / Teams</span></label>
+        <label class="check-item"><input type="checkbox" value="QuickBooks / Xero"> <span>QuickBooks / Xero</span></label>
+        <label class="check-item"><input type="checkbox" value="Shopify / WooCommerce"> <span>Shopify / WooCommerce</span></label>
+        <label class="check-item"><input type="checkbox" value="Google Workspace"> <span>Google Workspace</span></label>
+        <label class="check-item"><input type="checkbox" value="Custom / other tools"> <span>Custom / other tools</span></label>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q5', true)">← Back</button>
+      <button class="next-btn" onclick="nav('s-q7')">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 7
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q7">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-7"></div>
+      <p class="step-label"><em>Step 7 of 9</em> — Investment range</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">What is your approximate budget for implementing an AI automation solution?</p>
+      <p class="q-hint">This helps us scope the right solution for your stage. There is no right or wrong answer.</p>
+      <div class="radio-list" id="rg-budget">
+        <label class="radio-item"><input type="radio" name="budget" value="under-500"> <span>Under $500 — I'm exploring options</span></label>
+        <label class="radio-item"><input type="radio" name="budget" value="500-1500"> <span>$500–$1,500 — ready to invest at the right value</span></label>
+        <label class="radio-item"><input type="radio" name="budget" value="1500-5000"> <span>$1,500–$5,000 — serious about solving this</span></label>
+        <label class="radio-item"><input type="radio" name="budget" value="5000+"> <span>$5,000+ — this is a strategic priority</span></label>
+        <label class="radio-item"><input type="radio" name="budget" value="not-sure"> <span>Not sure yet</span></label>
+      </div>
+      <div class="error" id="e9">⚠ Please select a budget range.</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q6', true)">← Back</button>
+      <button class="next-btn" onclick="validateQ7()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 8
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q8">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-8"></div>
+      <p class="step-label"><em>Step 8 of 9</em> — Timeline & urgency</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">How soon are you looking to have a solution in place?</p>
+      <div class="radio-list" id="rg-timeline">
+        <label class="radio-item"><input type="radio" name="timeline" value="just-researching"> <span>Just researching for now — no urgency</span></label>
+        <label class="radio-item"><input type="radio" name="timeline" value="3-6mo"> <span>Within 3–6 months</span></label>
+        <label class="radio-item"><input type="radio" name="timeline" value="1-3mo"> <span>Within the next 1–3 months</span></label>
+        <label class="radio-item"><input type="radio" name="timeline" value="asap"> <span>As soon as possible — this is urgent</span></label>
+      </div>
+      <div class="error" id="e10">⚠ Please select a timeline.</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q7', true)">← Back</button>
+      <button class="next-btn" onclick="validateQ8()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       STEP 9
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-q9">
+    <div class="progress-wrap">
+      <div class="progress-dots" id="pd-9"></div>
+      <p class="step-label"><em>Step 9 of 9</em> — Final step</p>
+    </div>
+    <div class="field-wrap">
+      <p class="q-label">What is your role in your organization?</p>
+      <p class="q-hint">We work directly with decision-makers to ensure your session is actionable from day one.</p>
+      <div class="radio-list" id="rg-role">
+        <label class="radio-item"><input type="radio" name="role" value="owner"> <span>Owner / Founder / CEO</span></label>
+        <label class="radio-item"><input type="radio" name="role" value="director"> <span>Director / VP / C-Suite</span></label>
+        <label class="radio-item"><input type="radio" name="role" value="manager"> <span>Operations / Department Manager</span></label>
+        <label class="radio-item"><input type="radio" name="role" value="employee"> <span>Team member — someone else makes budget decisions</span></label>
+      </div>
+      <div class="error" id="e11">⚠ Please select your role.</div>
+    </div>
+    <div class="nav-row">
+      <button class="back-btn" onclick="nav('s-q8', true)">← Back</button>
+      <button class="next-btn" id="submit-btn" onclick="submitAudit()">Submit My Audit Request →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       QUALIFIED
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-qualified">
+    <div class="approved-header">
+      <div class="checkmark-ring">✓</div>
+      <h2 class="headline" style="font-size:1.3rem">You're approved. Let's build your automation roadmap.</h2>
+      <p class="sub" style="font-size:13.5px">Based on your answers, your business is an excellent fit for a custom AI automation strategy. Reserve your private 30-minute Automation Audit — we'll analyze your workflows, quantify your time leakage, and map a clear path to 10+ hours saved per week.</p>
+    </div>
+    <div class="cal-block">
+      <div class="cal-icon">📅</div>
+      <div class="cal-title">Book your Automation Audit session</div>
+      <div class="cal-sub">30 min · Video call · Free · Limited availability</div>
+      <!--
+        ╔══════════════════════════════════════════════════╗
+        ║  SETUP REQUIRED: Replace the href below with    ║
+        ║  your Calendly or Cal.com booking link.         ║
+        ║  e.g. https://calendly.com/yourname/45min       ║
+        ╚══════════════════════════════════════════════════╝
+      -->
+      <a class="cal-cta" href="https://calendly.com/assoc-accnt/30min" target="_blank" rel="noopener noreferrer">
+        Choose a Time That Works For Me →
+      </a>
+      <p class="cal-hint">📅 30 min · Video call · Free · Limited availability</p>
+    </div>
+    <div class="next-steps">
+      <p class="next-steps-title">What happens next</p>
+      <ol>
+        <li>Pick a time slot that works for you.</li>
+        <li>You'll receive a confirmation with a short pre-call prep guide.</li>
+        <li>We'll spend 30 minutes mapping your highest-ROI automation opportunities — no generic advice, no upsells.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       UNQUALIFIED
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-unqualified">
+    <div style="text-align:center;padding:0.75rem 0 0.5rem">
+      <div style="font-size:2rem;margin-bottom:1rem">🙏</div>
+      <h2 class="headline" style="font-size:1.25rem">Thank you for taking the time to apply.</h2>
+      <p class="sub" style="font-size:13.5px">We genuinely appreciate your interest, and we want to be respectful of your time — so we'll be straightforward.</p>
+      <p class="sub" style="font-size:13px;margin-top:-0.5rem">Based on your current situation, we don't believe a private Automation Audit is the right next step right now. Our done-for-you systems are designed for teams with specific operational complexity and investment readiness.</p>
+      <hr class="divider">
+      <p style="font-family:'Syne',sans-serif;font-size:13.5px;font-weight:600;color:var(--text-1);margin-bottom:0.75rem">This doesn't mean automation isn't right for you — it may just mean the timing isn't there yet.</p>
+      <p style="font-size:13px;color:var(--text-2);line-height:1.75;margin-bottom:1.125rem">In the meantime, here are a couple of things that might help:</p>
+      <div style="display:grid;gap:8px;text-align:left">
+        <div class="resource-card">
+          <p class="resource-card-title">📋 Free resource: The 5-Step Automation Readiness Checklist</p>
+          <p class="resource-card-sub">Assess where your business stands before investing in automation.</p>
+        </div>
+        <div class="resource-card">
+          <p class="resource-card-title">💡 Follow along: Weekly automation insights on LinkedIn</p>
+          <p class="resource-card-sub">Practical tips for teams at every stage of the automation journey.</p>
+        </div>
+      </div>
+      <p style="font-size:11.5px;color:var(--text-3);margin-top:1.25rem;line-height:1.65">When your situation changes, we'd encourage you to reapply — we review all applicants individually.</p>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+<div class="form-footer">
+  🔒 Secured &amp; confidential ·
+  <a href="#">Privacy Policy</a> ·
+  <a href="#">Terms</a>
+</div>
+</div><!-- /page -->
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────────────
+   ⚙  CONFIGURATION — edit these before publishing
+──────────────────────────────────────────────────────
+   WEBHOOK_URL: Paste your FormSubmit, Zapier, Make, or
+   n8n webhook URL here to receive form submissions.
+   Leave empty to skip (form will still work visually).
+
+   FormSubmit (zero-backend, free):
+     https://formsubmit.co/ajax/your@email.com
+   Zapier webhook:
+     https://hooks.zapier.com/hooks/catch/XXXXXXX/XXXXXXX/
+   Make (Integromat):
+     https://hook.make.com/...
+─────────────────────────────────────────────────────*/
+const CONFIG = {
+  WEBHOOK_URL: '',        // ← paste your webhook here
+  CALENDLY_URL: 'https://calendly.com/assoc-accnt/30min',
+};
+
+/* ─────────────────────────────────────────────────────
+   PROGRESS DOTS
+───────────────────────────────────────────────────── */
+const TOTAL = 9;
+
+(function buildDots() {
+  for (let step = 1; step <= TOTAL; step++) {
+    const wrap = document.getElementById(`pd-${step}`);
+    if (!wrap) continue;
+    wrap.innerHTML = Array.from({ length: TOTAL }, (_, i) =>
+      `<div class="progress-dot${i < step ? ' filled' : ''}"></div>`
+    ).join('');
+  }
+})();
+
+/* ─────────────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────────────── */
+let busy = false;
+
+function nav(targetId, isBack = false) {
+  if (busy) return;
+  const current = document.querySelector('.screen.active');
+  const target  = document.getElementById(targetId);
+  if (!target || current === target) return;
+
+  busy = true;
+  current.classList.remove('active');
+  if (isBack) target.classList.add('back');
+  target.classList.add('active');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    target.classList.remove('back');
+    setTimeout(() => { busy = false; }, 420);
+  }));
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ─────────────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────────────── */
+const radio = name => (document.querySelector(`input[name="${name}"]:checked`) || {}).value || null;
+const checks = id => [...document.querySelectorAll(`#${id} input:checked`)].map(el => el.value);
+
+function err(id, show) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('visible', show);
+}
+
+function updateCharCount() {
+  const txt = document.getElementById('q5-pain');
+  const cc  = document.getElementById('cc');
+  if (!txt || !cc) return;
+  const len = txt.value.trim().length;
+  cc.textContent = `${len} / 20 characters minimum`;
+  cc.classList.toggle('ok', len >= 20);
+}
+
+/* ─────────────────────────────────────────────────────
+   VALIDATORS
+───────────────────────────────────────────────────── */
+function validateQ1() {
+  const n = document.getElementById('q1-name').value.trim();
+  const e = document.getElementById('q1-email').value.trim();
+  const c = document.getElementById('q1-company').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  err('e1', !n); err('e2', !emailOk); err('e3', !c);
+  if (n && emailOk && c) nav('s-q2');
+}
+
+function validateQ2() {
+  const ind = document.getElementById('q2-industry').value;
+  const sz  = radio('size');
+  err('e4', !ind); err('e5', !sz);
+  if (ind && sz) nav('s-q3');
+}
+
+function validateQ3() {
+  const sel = checks('cg-pain').length > 0;
+  err('e6', !sel);
+  if (sel) nav('s-q4');
+}
+
+function validateQ4() {
+  const h = radio('hours');
+  err('e7', !h);
+  if (h) nav('s-q5');
+}
+
+function validateQ5() {
+  const p = document.getElementById('q5-pain').value.trim();
+  err('e8', p.length < 20);
+  if (p.length >= 20) nav('s-q6');
+}
+
+function validateQ7() {
+  const b = radio('budget');
+  err('e9', !b);
+  if (b) nav('s-q8');
+}
+
+function validateQ8() {
+  const t = radio('timeline');
+  err('e10', !t);
+  if (t) nav('s-q9');
+}
+
+/* ─────────────────────────────────────────────────────
+   FINAL SUBMISSION + QUALIFICATION
+───────────────────────────────────────────────────── */
+async function submitAudit() {
+  const r = radio('role');
+  err('e11', !r);
+  if (!r) return;
+
+  // Qualification logic (matches original exactly)
+  const budget   = radio('budget');
+  const timeline = radio('timeline');
+  const hours    = radio('hours');
+  const qualified = !(budget === 'under-500' || timeline === 'just-researching' || r === 'employee' || hours === '1-5');
+
+  // Disable button to prevent double-submit
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  // Collect data
+  const payload = {
+    qualified,
+    submitted_at: new Date().toISOString(),
+    name:         document.getElementById('q1-name').value.trim(),
+    email:        document.getElementById('q1-email').value.trim(),
+    company:      document.getElementById('q1-company').value.trim(),
+    industry:     document.getElementById('q2-industry').value,
+    team_size:    radio('size'),
+    pain_areas:   checks('cg-pain').join(', '),
+    hours_wasted: hours,
+    main_challenge: document.getElementById('q5-pain').value.trim(),
+    tools_used:   checks('cg-tools').join(', '),
+    budget,
+    timeline,
+    role:         r,
+  };
+
+  // Send to webhook (non-blocking)
+  if (CONFIG.WEBHOOK_URL) {
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      console.warn('[Audit] Webhook delivery failed:', e.message);
+    }
+  }
+
+  // Save to localStorage as backup
+  try {
+    const submissions = JSON.parse(localStorage.getItem('audit_submissions') || '[]');
+    submissions.push(payload);
+    localStorage.setItem('audit_submissions', JSON.stringify(submissions));
+  } catch (e) {}
+
+  // Navigate to result
+  nav(qualified ? 's-qualified' : 's-unqualified');
+}
+
+/* ─────────────────────────────────────────────────────
+   INTERACTIVE RADIO / CHECKBOX HIGHLIGHTING
+───────────────────────────────────────────────────── */
+document.querySelectorAll('.radio-item').forEach(item => {
+  item.addEventListener('change', () => {
+    const name = item.querySelector('input').name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(inp => {
+      inp.closest('.radio-item').classList.toggle('selected', inp.checked);
+    });
+  });
+});
+
+document.querySelectorAll('.check-item').forEach(item => {
+  item.addEventListener('change', () => {
+    item.classList.toggle('selected', item.querySelector('input').checked);
+  });
+});
+
+/* ─────────────────────────────────────────────────────
+   ENTER KEY SUPPORT (text inputs → advance)
+───────────────────────────────────────────────────── */
+document.querySelectorAll('input[type=text], input[type=email]').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const screen = inp.closest('.screen');
+    if (!screen) return;
+    const btn = screen.querySelector('.next-btn');
+    if (btn) btn.click();
+  });
+});
+</script>
+</body>
+</html>
