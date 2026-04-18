@@ -1115,8 +1115,18 @@ input[type=checkbox]:checked::after {
      https://hook.make.com/...
 ─────────────────────────────────────────────────────*/
 const CONFIG = {
-  WEBHOOK_URL: 'https://Winnax86-n8n-automationprod.hf.space/webhook-test/lead-intake',        // ← paste your webhook here
+  // ── TEST URL (n8n editor open + "Listen for test event" active) ──────────
+  // WEBHOOK_URL: 'https://Winnax86-n8n-automationprod.hf.space/webhook-test/lead-intake',
+
+  // ── PRODUCTION URL (workflow activated via the toggle in n8n) ─────────────
+  // Switch to this line when going live — activate workflow first!
+  WEBHOOK_URL: 'https://Winnax86-n8n-automationprod.hf.space/webhook-test/lead-intake',
+
   CALENDLY_URL: 'https://calendly.com/assoc-accnt/30min',
+
+  // Retry config — retries up to 3x with 1.5s delay on network failure
+  MAX_RETRIES: 3,
+  RETRY_DELAY_MS: 1500,
 };
 
 /* ─────────────────────────────────────────────────────
@@ -1229,6 +1239,66 @@ function validateQ8() {
 }
 
 /* ─────────────────────────────────────────────────────
+   TOAST NOTIFICATION HELPER
+───────────────────────────────────────────────────── */
+function showToast(msg, type = 'error') {
+  const existing = document.getElementById('_toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = '_toast';
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+    background: type === 'error' ? '#f87171' : '#34d399',
+    color: '#fff', padding: '12px 22px', borderRadius: '10px',
+    fontFamily: "'DM Sans', sans-serif", fontSize: '14px',
+    boxShadow: '0 8px 30px rgba(0,0,0,0.35)', zIndex: 9999,
+    maxWidth: '90vw', textAlign: 'center', lineHeight: '1.5',
+    animation: 'fadeInUp 0.3s ease both',
+  });
+  // Inject keyframe once
+  if (!document.getElementById('_toastStyle')) {
+    const s = document.createElement('style');
+    s.id = '_toastStyle';
+    s.textContent = '@keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+    document.head.appendChild(s);
+  }
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 5000);
+}
+
+/* ─────────────────────────────────────────────────────
+   WEBHOOK SENDER WITH RETRY
+───────────────────────────────────────────────────── */
+async function sendToWebhook(payload, retries = CONFIG.MAX_RETRIES) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(CONFIG.WEBHOOK_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+      console.log('[Audit] Webhook delivered on attempt', attempt);
+      return true;                        // ✅ success
+    } catch (e) {
+      console.warn(`[Audit] Attempt ${attempt}/${retries} failed:`, e.message);
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, CONFIG.RETRY_DELAY_MS));
+      } else {
+        // All retries exhausted — save to localStorage as fallback
+        try {
+          const saved = JSON.parse(localStorage.getItem('audit_failed') || '[]');
+          saved.push({ payload, error: e.message, ts: new Date().toISOString() });
+          localStorage.setItem('audit_failed', JSON.stringify(saved));
+        } catch (_) {}
+        return false;                     // ❌ failed
+      }
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────
    FINAL SUBMISSION + QUALIFICATION
 ───────────────────────────────────────────────────── */
 async function submitAudit() {
@@ -1236,56 +1306,56 @@ async function submitAudit() {
   err('e11', !r);
   if (!r) return;
 
-  // Qualification logic (matches original exactly)
   const budget   = radio('budget');
   const timeline = radio('timeline');
   const hours    = radio('hours');
   const qualified = !(budget === 'under-500' || timeline === 'just-researching' || r === 'employee' || hours === '1-5');
 
-  // Disable button to prevent double-submit
+  // Lock button while submitting
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'Submitting…';
 
-  // Collect data
+  // ── Build payload (field names match n8n Normalize node exactly) ──────────
+  // name→lead_name | email→lead_email | company→lead_business
+  // main_challenge→challenge | tools_used→already_tried
   const payload = {
     qualified,
-    submitted_at: new Date().toISOString(),
-    name:         document.getElementById('q1-name').value.trim(),
-    email:        document.getElementById('q1-email').value.trim(),
-    company:      document.getElementById('q1-company').value.trim(),
-    industry:     document.getElementById('q2-industry').value,
-    team_size:    radio('size'),
-    pain_areas:   checks('cg-pain').join(', '),
-    hours_wasted: hours,
+    submitted_at:   new Date().toISOString(),
+    name:           document.getElementById('q1-name').value.trim(),
+    email:          document.getElementById('q1-email').value.trim(),
+    company:        document.getElementById('q1-company').value.trim(),
+    industry:       document.getElementById('q2-industry').value,
+    team_size:      radio('size'),
+    pain_areas:     checks('cg-pain').join(', '),
+    hours_wasted:   hours,
     main_challenge: document.getElementById('q5-pain').value.trim(),
-    tools_used:   checks('cg-tools').join(', '),
+    tools_used:     checks('cg-tools').join(', '),
     budget,
     timeline,
-    role:         r,
+    role:           r,
   };
 
-  // Send to webhook (non-blocking)
+  // ── Always save to localStorage first (instant, never fails) ─────────────
+  try {
+    const all = JSON.parse(localStorage.getItem('audit_submissions') || '[]');
+    all.push(payload);
+    localStorage.setItem('audit_submissions', JSON.stringify(all));
+  } catch (_) {}
+
+  // ── Send to n8n webhook ───────────────────────────────────────────────────
   if (CONFIG.WEBHOOK_URL) {
-    try {
-      await fetch(CONFIG.WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (e) {
-      console.warn('[Audit] Webhook delivery failed:', e.message);
+    const ok = await sendToWebhook(payload);
+    if (!ok) {
+      // Restore button so they can retry
+      btn.disabled = false;
+      btn.textContent = 'Submit Application';
+      showToast('⚠️ Submission failed — check your internet connection and try again. Your answers are saved locally.');
+      return;   // Don't navigate away on failure
     }
   }
 
-  // Save to localStorage as backup
-  try {
-    const submissions = JSON.parse(localStorage.getItem('audit_submissions') || '[]');
-    submissions.push(payload);
-    localStorage.setItem('audit_submissions', JSON.stringify(submissions));
-  } catch (e) {}
-
-  // Navigate to result
+  // ── Navigate to result page only on success ───────────────────────────────
   nav(qualified ? 's-qualified' : 's-unqualified');
 }
 
