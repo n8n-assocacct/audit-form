@@ -1047,7 +1047,10 @@ input[type=checkbox]:checked::after {
         ║  e.g. https://calendly.com/yourname/45min       ║
         ╚══════════════════════════════════════════════════╝
       -->
-      <a class="cal-cta" href="https://calendly.com/assoc-accnt/30min" target="_blank" rel="noopener noreferrer">
+      <a class="cal-cta" href="<!-- Calendly inline widget begin -->
+<div class="calendly-inline-widget" data-url="https://calendly.com/assoc-accnt" style="min-width:320px;height:700px;"></div>
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<!-- Calendly inline widget end -->" target="_blank" rel="noopener noreferrer">
         Choose a Time That Works For Me →
       </a>
       <p class="cal-hint">📅 30 min · Video call · Free · Limited availability</p>
